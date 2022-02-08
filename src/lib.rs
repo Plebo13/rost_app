@@ -78,3 +78,22 @@ fn parse_asset_price(fragment: &scraper::Html) -> Option<f32> {
     let price: f32 = price_string.parse::<f32>().unwrap();
     return Some(price);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_coin_string() {
+        assert_eq!("bitcoin", get_coin_string(&Coin::Bitcoin));
+        assert_eq!("ethereum", get_coin_string(&Coin::Ethereum));
+        assert_eq!("binancecoin", get_coin_string(&Coin::BinanceCoin));
+        assert_eq!("tether", get_coin_string(&Coin::Tether));
+        assert_eq!("solana", get_coin_string(&Coin::Solana));
+        assert_eq!("cardano", get_coin_string(&Coin::Cardano));
+        assert_eq!("ripple", get_coin_string(&Coin::Ripple));
+        assert_eq!("usd-coin", get_coin_string(&Coin::USDCoin));
+        assert_eq!("polkadot", get_coin_string(&Coin::Polkadot));
+        assert_eq!("dogecoin", get_coin_string(&Coin::Dogecoin));
+    }
+}
