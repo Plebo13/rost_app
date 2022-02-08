@@ -1,9 +1,29 @@
 use scraper::Html;
 use scraper::Selector;
 
+const COIN_GECKO_URL: String =
+    String::from("https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies=eur");
+const LS_URL: String = String::from("https://www.ls-tc.de/de/etf/{}");
+
+enum Coin {
+    Bitcoin,
+    Ethereum,
+    BinanceCoin,
+    Tether,
+    Solana,
+    Cardano,
+    Ripple,
+    USDCoin,
+    Polkadot,
+    Dogecoin,
+}
+
+pub fn get_coin_price(coin: Coin) -> Result<f32, &str> {
+    let mut url = String::from();
+}
+
 pub fn get_etf_price(isin: &str) -> Result<f32, &str> {
-    let mut url = String::from("https://www.ls-tc.de/de/etf/");
-    url.push_str(isin);
+    let url = format!(&LS_URL, isin);
     let http_response = reqwest::blocking::get(&url);
     let http_response = match http_response {
         Ok(http_response) => http_response,
