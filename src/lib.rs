@@ -1,11 +1,7 @@
 use scraper::Html;
 use scraper::Selector;
 
-const COIN_GECKO_URL: String =
-    String::from("https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies=eur");
-const LS_URL: String = String::from("https://www.ls-tc.de/de/etf/{}");
-
-enum Coin {
+pub enum Coin {
     Bitcoin,
     Ethereum,
     BinanceCoin,
@@ -18,21 +14,40 @@ enum Coin {
     Dogecoin,
 }
 
-pub fn get_coin_price(coin: Coin) -> Result<f32, &str> {
-    let mut url = String::from();
+fn get_coin_string(coin: &Coin) -> &str {
+    match coin {
+        Coin::Bitcoin => return "bitcoin",
+        Coin::Ethereum => return "ethereum",
+        Coin::BinanceCoin => return "binancecoin",
+        Coin::Tether => return "tether",
+        Coin::Solana => return "solana",
+        Coin::Cardano => return "cardano",
+        Coin::Ripple => return "ripple",
+        Coin::USDCoin => return "usd-coin",
+        Coin::Polkadot => return "polkadot",
+        Coin::Dogecoin => return "dogecoin",
+    };
+}
+
+pub fn get_coin_price(coin: &Coin) -> Result<f32, &str> {
+    let url = format!(
+        "https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies=eur",
+        get_coin_string(coin)
+    );
+    Ok(42.0)
 }
 
 pub fn get_etf_price(isin: &str) -> Result<f32, &str> {
-    let url = format!(&LS_URL, isin);
-    let http_response = reqwest::blocking::get(&url);
-    let http_response = match http_response {
+    let url = format!("https://www.ls-tc.de/de/etf/{}", isin);
+    let http_response_result = reqwest::blocking::get(&url);
+    let http_response = match http_response_result {
         Ok(http_response) => http_response,
         Err(_error) => return Err("Error during HTTP request!"),
     };
 
     if http_response.status().is_success() {
-        let body = http_response.text();
-        let body = match body {
+        let body_result = http_response.text();
+        let body = match body_result {
             Ok(body) => body,
             Err(_error) => return Err("Error parsing the HTML document!"),
         };
@@ -40,11 +55,11 @@ pub fn get_etf_price(isin: &str) -> Result<f32, &str> {
         let fragment: scraper::Html = Html::parse_fragment(&body);
         let price = parse_asset_price(&fragment);
         match price {
-            Some(price) => Ok(price),
-            None => Err("Error parsing the HTML document!"),
+            Some(price) => return Ok(price),
+            None => return Err("Error parsing the HTML document!"),
         }
     } else {
-        Err("Error response")
+        return Err("Error response!");
     }
 }
 
@@ -61,5 +76,5 @@ fn parse_asset_price(fragment: &scraper::Html) -> Option<f32> {
         .inner_html();
     let price_string = parsed_price.replace(".", "").replace(",", ".");
     let price: f32 = price_string.parse::<f32>().unwrap();
-    Some(price)
+    return Some(price);
 }
