@@ -6,10 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "rost_app"           # The name of the target.
-path = "src/lib.rs"    # The source file of the target.
+name = "rost_app"   # The name of the target.
+path = "src/lib.rs" # The source file of the target.
 #test = true            # Is tested by default.
-crate-type = ["dylib"]   # The crate types to generate.
+crate-type = ["rlib", "dylib"] # The crate types to generate.
 
 [dependencies]
 reqwest = { version = "0.11", features = ["blocking", "json"] }
