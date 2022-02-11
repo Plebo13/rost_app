@@ -1,5 +1,7 @@
+use reqwest::blocking::Response;
 use scraper::Html;
 use scraper::Selector;
+use serde::Deserialize;
 
 pub enum Coin {
     Bitcoin,
@@ -12,6 +14,16 @@ pub enum Coin {
     USDCoin,
     Polkadot,
     Dogecoin,
+}
+
+#[derive(Deserialize)]
+struct CoinResponse {
+    bitcoin: CoinPrice,
+}
+
+#[derive(Deserialize)]
+struct CoinPrice {
+    eur: f32,
 }
 
 fn get_coin_string(coin: &Coin) -> &str {
@@ -29,37 +41,43 @@ fn get_coin_string(coin: &Coin) -> &str {
     };
 }
 
-pub fn get_coin_price(coin: &Coin) -> Result<f32, &str> {
+pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
     let url = format!(
         "https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies=eur",
         get_coin_string(coin)
     );
-    Ok(42.0)
+    let body_result: CoinResponse = request(url)?.json().unwrap();
+    Ok(body_result.bitcoin.eur)
 }
 
-pub fn get_etf_price(isin: &str) -> Result<f32, &str> {
+pub fn get_etf_price(isin: String) -> Result<f32, String> {
     let url = format!("https://www.ls-tc.de/de/etf/{}", isin);
-    let http_response_result = reqwest::blocking::get(&url);
+
+    let body_result = request(url)?.text();
+    let body = match body_result {
+        Ok(body) => body,
+        Err(_error) => return Err(String::from("Error parsing the HTML document!")),
+    };
+
+    let fragment: scraper::Html = Html::parse_fragment(&body);
+    let price = parse_asset_price(&fragment);
+    match price {
+        Some(price) => return Ok(price),
+        None => return Err(String::from("Error parsing the HTML document!")),
+    }
+}
+
+fn request(url: String) -> Result<Response, String> {
+    let http_response_result = reqwest::blocking::get(url);
     let http_response = match http_response_result {
         Ok(http_response) => http_response,
-        Err(_error) => return Err("Error during HTTP request!"),
+        Err(_error) => return Err(String::from("Error during HTTP request!")),
     };
 
     if http_response.status().is_success() {
-        let body_result = http_response.text();
-        let body = match body_result {
-            Ok(body) => body,
-            Err(_error) => return Err("Error parsing the HTML document!"),
-        };
-
-        let fragment: scraper::Html = Html::parse_fragment(&body);
-        let price = parse_asset_price(&fragment);
-        match price {
-            Some(price) => return Ok(price),
-            None => return Err("Error parsing the HTML document!"),
-        }
+        return Ok(http_response);
     } else {
-        return Err("Error response!");
+        return Err(String::from("Error response!"));
     }
 }
 
