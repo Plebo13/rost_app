@@ -1,7 +1,5 @@
-use reqwest::blocking::Response;
 use scraper::Html;
 use scraper::Selector;
-use serde::Deserialize;
 
 pub enum Coin {
     Bitcoin,
@@ -14,16 +12,6 @@ pub enum Coin {
     USDCoin,
     Polkadot,
     Dogecoin,
-}
-
-#[derive(Deserialize)]
-struct CoinResponse {
-    bitcoin: CoinPrice,
-}
-
-#[derive(Deserialize)]
-struct CoinPrice {
-    eur: f32,
 }
 
 fn get_coin_string(coin: &Coin) -> &str {
@@ -70,7 +58,7 @@ fn request(url: String) -> Result<String, String> {
     };
 
     if http_response.status().is_success() {
-        let body = match http_response.text() {
+        match http_response.text() {
             Ok(body) => return Ok(body),
             Err(_error) => return Err(String::from("Error parsing the HTML document!")),
         };
