@@ -46,36 +46,34 @@ pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
         "https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies=eur",
         get_coin_string(coin)
     );
-    let body_result: CoinResponse = request(url)?.json().unwrap();
-    Ok(body_result.bitcoin.eur)
+    let body = request(url)?;
+    let first_split: Vec<&str> = body.split("\"eur\":").collect();
+    let second_split: Vec<&str> = first_split[1].split("}").collect();
+    let price: f32 = second_split[0].parse::<f32>().unwrap();
+    Ok(price)
 }
 
 pub fn get_etf_price(isin: String) -> Result<f32, String> {
     let url = format!("https://www.ls-tc.de/de/etf/{}", isin);
-
-    let body_result = request(url)?.text();
-    let body = match body_result {
-        Ok(body) => body,
-        Err(_error) => return Err(String::from("Error parsing the HTML document!")),
-    };
-
+    let body = request(url)?;
     let fragment: scraper::Html = Html::parse_fragment(&body);
-    let price = parse_asset_price(&fragment);
-    match price {
+    match parse_asset_price(&fragment) {
         Some(price) => return Ok(price),
         None => return Err(String::from("Error parsing the HTML document!")),
     }
 }
 
-fn request(url: String) -> Result<Response, String> {
-    let http_response_result = reqwest::blocking::get(url);
-    let http_response = match http_response_result {
+fn request(url: String) -> Result<String, String> {
+    let http_response = match reqwest::blocking::get(url) {
         Ok(http_response) => http_response,
         Err(_error) => return Err(String::from("Error during HTTP request!")),
     };
 
     if http_response.status().is_success() {
-        return Ok(http_response);
+        let body = match http_response.text() {
+            Ok(body) => return Ok(body),
+            Err(_error) => return Err(String::from("Error parsing the HTML document!")),
+        };
     } else {
         return Err(String::from("Error response!"));
     }
