@@ -2,13 +2,18 @@
 name = "rost_app"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+description = "Small library that lets you receive current asset prices."
+homepage = "https://github.com/Plebo13/rost_app"
+repository = "https://github.com/Plebo13/rost_app"
+readme = "README.md"
+exclude = [".gitignore", ".gitpod.yml", ".github/"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-name = "rost_app"   # The name of the target.
-path = "src/lib.rs" # The source file of the target.
-#test = true            # Is tested by default.
+name = "rost_app"              # The name of the target.
+path = "src/lib.rs"            # The source file of the target.
 crate-type = ["rlib", "dylib"] # The crate types to generate.
 
 [dependencies]
