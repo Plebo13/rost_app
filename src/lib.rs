@@ -29,6 +29,22 @@ fn get_coin_string(coin: &Coin) -> &str {
     };
 }
 
+pub fn get_coin(coin_string: &str) -> Option<&Coin> {
+    match coin_string {
+        "bitcoin" => return Some(&Coin::Bitcoin),
+        "ethereum" => return Some(&Coin::Ethereum),
+        "binancecoin" => return Some(&Coin::BinanceCoin),
+        "tether" => return Some(&Coin::Tether),
+        "solana" => return Some(&Coin::Solana),
+        "cardano" => return Some(&Coin::Cardano),
+        "ripple" => return Some(&Coin::Ripple),
+        "usd-coin" => return Some(&Coin::USDCoin),
+        "polkadot" => return Some(&Coin::Polkadot),
+        "dogecoin" => return Some(&Coin::Dogecoin),
+        _ => return None,
+    };
+}
+
 pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
     let url = format!(
         "https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies=eur",
