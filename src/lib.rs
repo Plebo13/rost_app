@@ -1,6 +1,7 @@
 use scraper::Html;
 use scraper::Selector;
 
+/// Enum representing all supported cryptocurrencies.
 pub enum Coin {
     Bitcoin,
     Ethereum,
@@ -29,6 +30,19 @@ fn get_coin_string(coin: &Coin) -> &str {
     };
 }
 
+/// Returns the coin matching the given string.
+///
+/// # Arguments
+///
+/// * `coin_string` - A string for a cryptocurrency
+///
+/// # Examples
+///
+/// ```
+/// use rost_app::Coin;
+///
+/// let coin: &Coin = rost_app::get_coin("bitcoin").unwrap();
+/// ```
 pub fn get_coin(coin_string: &str) -> Option<&Coin> {
     match coin_string {
         "bitcoin" => return Some(&Coin::Bitcoin),
@@ -45,6 +59,19 @@ pub fn get_coin(coin_string: &str) -> Option<&Coin> {
     };
 }
 
+/// Returns the price for a given coin.
+///
+/// # Arguments
+///
+/// * `coin` - The given coin
+///
+/// # Examples
+///
+/// ```
+/// use rost_app::Coin;
+///
+/// let price: f32 = rost_app::get_coin_price(&Coin::Bitcoin).unwrap();
+/// ```
 pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
     let url = format!(
         "https://api.coingecko.com/api/v3/simple/price?ids={}&vs_currencies=eur",
@@ -57,6 +84,17 @@ pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
     Ok(price)
 }
 
+/// Returns the price for an ETF.
+///
+/// # Arguments
+///
+/// * `isin` - The ISIN of the ETF
+///
+/// # Examples
+///
+/// ```
+/// let price: f32 = rost_app::get_etf_price(String::from("LU1781541179")).unwrap();
+/// ```
 pub fn get_etf_price(isin: String) -> Result<f32, String> {
     let url = format!("https://www.ls-tc.de/de/etf/{}", isin);
     let body = request(url)?;
