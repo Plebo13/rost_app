@@ -15,21 +15,6 @@ pub enum Coin {
     Dogecoin,
 }
 
-fn get_coin_string(coin: &Coin) -> &str {
-    match coin {
-        Coin::Bitcoin => return "bitcoin",
-        Coin::Ethereum => return "ethereum",
-        Coin::BinanceCoin => return "binancecoin",
-        Coin::Tether => return "tether",
-        Coin::Solana => return "solana",
-        Coin::Cardano => return "cardano",
-        Coin::Ripple => return "ripple",
-        Coin::USDCoin => return "usd-coin",
-        Coin::Polkadot => return "polkadot",
-        Coin::Dogecoin => return "dogecoin",
-    };
-}
-
 /// Returns the coin matching the given string.
 ///
 /// # Arguments
@@ -103,6 +88,21 @@ pub fn get_etf_price(isin: String) -> Result<f32, String> {
         Some(price) => return Ok(price),
         None => return Err(String::from("Error parsing the HTML document!")),
     }
+}
+
+fn get_coin_string(coin: &Coin) -> &str {
+    match coin {
+        Coin::Bitcoin => return "bitcoin",
+        Coin::Ethereum => return "ethereum",
+        Coin::BinanceCoin => return "binancecoin",
+        Coin::Tether => return "tether",
+        Coin::Solana => return "solana",
+        Coin::Cardano => return "cardano",
+        Coin::Ripple => return "ripple",
+        Coin::USDCoin => return "usd-coin",
+        Coin::Polkadot => return "polkadot",
+        Coin::Dogecoin => return "dogecoin",
+    };
 }
 
 fn request(url: String) -> Result<String, String> {
