@@ -9,6 +9,14 @@ fn test_invalid_isin() {
 }
 
 #[test]
+fn test_get_etf_price() {
+    match rost_app::get_etf_price(String::from("LU1781541179")) {
+        Ok(_price) => assert!(true),
+        Err(_error) => panic!("Unexpected exception!"),
+    }
+}
+
+#[test]
 fn test_get_bitcoin() {
     match rost_app::get_coin_price(&Coin::Bitcoin) {
         Ok(_price) => assert!(true),
