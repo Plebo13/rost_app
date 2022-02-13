@@ -1,8 +1,8 @@
 [package]
 name = "rost_app"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-license-file = "LICENSE"
+license = "MIT"
 description = "Small library that lets you receive current asset prices."
 homepage = "https://github.com/Plebo13/rost_app"
 repository = "https://github.com/Plebo13/rost_app"
