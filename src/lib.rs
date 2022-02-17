@@ -30,18 +30,18 @@ pub enum Coin {
 /// ```
 pub fn get_coin(coin_string: &str) -> Option<&Coin> {
     match coin_string {
-        "bitcoin" => return Some(&Coin::Bitcoin),
-        "ethereum" => return Some(&Coin::Ethereum),
-        "binancecoin" => return Some(&Coin::BinanceCoin),
-        "tether" => return Some(&Coin::Tether),
-        "solana" => return Some(&Coin::Solana),
-        "cardano" => return Some(&Coin::Cardano),
-        "ripple" => return Some(&Coin::Ripple),
-        "usd-coin" => return Some(&Coin::USDCoin),
-        "polkadot" => return Some(&Coin::Polkadot),
-        "dogecoin" => return Some(&Coin::Dogecoin),
-        _ => return None,
-    };
+        "bitcoin" => Some(&Coin::Bitcoin),
+        "ethereum" => Some(&Coin::Ethereum),
+        "binancecoin" => Some(&Coin::BinanceCoin),
+        "tether" => Some(&Coin::Tether),
+        "solana" => Some(&Coin::Solana),
+        "cardano" => Some(&Coin::Cardano),
+        "ripple" => Some(&Coin::Ripple),
+        "usd-coin" => Some(&Coin::USDCoin),
+        "polkadot" => Some(&Coin::Polkadot),
+        "dogecoin" => Some(&Coin::Dogecoin),
+        _ => None,
+    }
 }
 
 /// Returns the price for a given coin.
@@ -64,7 +64,7 @@ pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
     );
     let body = request(url)?;
     let first_split: Vec<&str> = body.split("\"eur\":").collect();
-    let second_split: Vec<&str> = first_split[1].split("}").collect();
+    let second_split: Vec<&str> = first_split[1].split('}').collect();
     let price: f32 = second_split[0].parse::<f32>().unwrap();
     Ok(price)
 }
@@ -78,31 +78,31 @@ pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
 /// # Examples
 ///
 /// ```
-/// let price: f32 = rost_app::get_etf_price(&String::from("LU1781541179")).unwrap();
+/// let price: f32 = rost_app::get_etf_price(String::from("LU1781541179")).unwrap();
 /// ```
-pub fn get_etf_price(isin: &String) -> Result<f32, String> {
+pub fn get_etf_price(isin: &str) -> Result<f32, String> {
     let url = format!("https://www.ls-tc.de/de/etf/{}", isin);
     let body = request(url)?;
     let fragment: scraper::Html = Html::parse_fragment(&body);
     match parse_asset_price(&fragment) {
-        Some(price) => return Ok(price),
-        None => return Err(String::from("Error parsing the HTML document!")),
+        Some(price) => Ok(price),
+        None => Err(String::from("Error parsing the HTML document!")),
     }
 }
 
 fn get_coin_string(coin: &Coin) -> &str {
     match coin {
-        Coin::Bitcoin => return "bitcoin",
-        Coin::Ethereum => return "ethereum",
-        Coin::BinanceCoin => return "binancecoin",
-        Coin::Tether => return "tether",
-        Coin::Solana => return "solana",
-        Coin::Cardano => return "cardano",
-        Coin::Ripple => return "ripple",
-        Coin::USDCoin => return "usd-coin",
-        Coin::Polkadot => return "polkadot",
-        Coin::Dogecoin => return "dogecoin",
-    };
+        Coin::Bitcoin => "bitcoin",
+        Coin::Ethereum => "ethereum",
+        Coin::BinanceCoin => "binancecoin",
+        Coin::Tether => "tether",
+        Coin::Solana => "solana",
+        Coin::Cardano => "cardano",
+        Coin::Ripple => "ripple",
+        Coin::USDCoin => "usd-coin",
+        Coin::Polkadot => "polkadot",
+        Coin::Dogecoin => "dogecoin",
+    }
 }
 
 fn request(url: String) -> Result<String, String> {
@@ -113,11 +113,11 @@ fn request(url: String) -> Result<String, String> {
 
     if http_response.status().is_success() {
         match http_response.text() {
-            Ok(body) => return Ok(body),
-            Err(_error) => return Err(String::from("Error parsing the HTML document!")),
-        };
+            Ok(body) => Ok(body),
+            Err(_error) => Err(String::from("Error parsing the HTML document!")),
+        }
     } else {
-        return Err(String::from("Error response!"));
+        Err(String::from("Error response!"))
     }
 }
 
@@ -134,7 +134,7 @@ fn parse_asset_price(fragment: &scraper::Html) -> Option<f32> {
         .inner_html();
     let price_string = parsed_price.replace(".", "").replace(",", ".");
     let price: f32 = price_string.parse::<f32>().unwrap();
-    return Some(price);
+    Some(price)
 }
 
 #[cfg(test)]
