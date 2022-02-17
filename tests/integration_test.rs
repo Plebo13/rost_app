@@ -10,7 +10,7 @@ fn test_invalid_isin() {
 
 #[test]
 fn test_get_etf_price() {
-    match rost_app::get_etf_price("LU1781541179") {
+    match rost_app::get_etf_price(&String::from("LU1781541179")) {
         Ok(_price) => {}
         Err(_error) => panic!("Unexpected exception!"),
     }
