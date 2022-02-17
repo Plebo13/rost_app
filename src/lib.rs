@@ -78,9 +78,9 @@ pub fn get_coin_price(coin: &Coin) -> Result<f32, String> {
 /// # Examples
 ///
 /// ```
-/// let price: f32 = rost_app::get_etf_price(String::from("LU1781541179")).unwrap();
+/// let price: f32 = rost_app::get_etf_price(&String::from("LU1781541179")).unwrap();
 /// ```
-pub fn get_etf_price(isin: String) -> Result<f32, String> {
+pub fn get_etf_price(isin: &String) -> Result<f32, String> {
     let url = format!("https://www.ls-tc.de/de/etf/{}", isin);
     let body = request(url)?;
     let fragment: scraper::Html = Html::parse_fragment(&body);
