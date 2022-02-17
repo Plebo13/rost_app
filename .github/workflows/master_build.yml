@@ -17,9 +17,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Clippy
-      - name: Clippy
-        run: |
-          rustup component add clippy
-          cargo clippy --all-targets --all-features -- -D warnings
+      run: |
+        rustup component add clippy
+        cargo clippy --all-targets --all-features -- -D warnings
     - name: Build and test
       run: cargo test
