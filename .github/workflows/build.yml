@@ -1,6 +1,8 @@
 name: Build
 
 on: [push]
+branches-ignore:    
+      - 'master'
 
 env:
   CARGO_TERM_COLOR: always
@@ -13,7 +15,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Clippy
-      run: rustup component add clippy
-      run: cargo clippy
+      run: |
+          rustup component add clippy
+          cargo clippy
     - name: Build and test
       run: cargo test
